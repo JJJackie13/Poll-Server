@@ -1,0 +1,292 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Poll_demo API",
+        "description": "Generate Poll_demo API document with swagger"
+    },
+    "tags": [
+        {
+            "name": "Poll",
+            "description": "API for in the system"
+        }
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/v1/login": {
+            "post": {
+                "tags": [
+                    "login"
+                ],
+                "summary": "Login to your own account",
+                "requestBody": {
+                    "description": "User Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "401": {
+                        "description": "Failed. Wrong id/name!"
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            }
+        },
+        "/v1/logout": {
+            "get": {
+                "tags": [
+                    "Logout"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            }
+        },
+        "/v1/register": {
+            "post": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Register for a new account",
+                "requestBody": {
+                    "description": "User Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to register!"
+                    },
+                    "401": {
+                        "description": "Please provide valid HKID no. and your surname"
+                    },
+                    "403": {
+                        "description": "This HKID no. is already register!"
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            }
+        },
+        "/v1/campaigns/:id": {
+            "get": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Click to campaign by Id",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Poll_options_list"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to retrieve campaign"
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            }
+        },
+        "/v1/campaigns": {
+            "get": {
+                "tags": [
+                    "Activated campaigns"
+                ],
+                "summary": "Get Lists of the activated campaigns",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Campaigns_list"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to retrieve campaign"
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            }
+        },
+        "/v1/campaigns_ended": {
+            "get": {
+                "tags": [
+                    "Ended campaigns"
+                ],
+                "summary": "Get Lists of the ended campaigns",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "ArrayOfCampaigns": {
+                                "type": "array",
+                                "$ref": "#/definitions/Campaigns_list"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to retrieve campaign"
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            }
+        },
+        "/v1/compaigns_vote": {
+            "post": {
+                "tags": [
+                    "Vote"
+                ],
+                "summary": "Vote for a poll",
+                "requestBody": {
+                    "description": "Vote Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/vote"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/vote"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed"
+                    }
+                }
+            }
+        }
+
+    },
+
+    "definitions": {
+        "User": {
+            "type": "object",
+            "properties": {
+                "hkid": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "Campaigns_list": {
+            "type": "object",
+            "properties": {
+                "totalvote": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "date"
+                },
+                "end_time": {
+                    "type": "date"
+                }
+            }
+        },
+        "Poll_options_list": {
+            "type": "object",
+            "properties": {
+                "vote_number": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "date"
+                },
+                "end_time": {
+                    "type": "date"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "vote": {
+            "type": "object",
+            "properties": {
+                "user_Id": {
+                    "type": "integer"
+                },
+                "poll_options_id": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}
