@@ -73,4 +73,19 @@ export class PollService {
             return false;
         }
     }
+    checkCampaignValidity = async (pollOptionId: number) => {
+        try {
+            const result = (await this.knex.raw(
+                `select poll_options.id from poll
+                join poll_options on poll.id = poll_options.poll_id
+                where end_time < now()
+                and poll_options.id = :pollOptionsId;`,
+                { pollOptionId }
+            )).rows
+            return result;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
 }

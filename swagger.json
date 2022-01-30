@@ -218,6 +218,9 @@
                     },
                     "400": {
                         "description": "Failed"
+                    },
+                    "403": {
+                        "description": "Campaign expired"
                     }
                 }
             }

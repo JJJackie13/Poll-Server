@@ -58,6 +58,10 @@ export class PollController {
     postVote = async (req: Request, res: Response) => {
         const userId = parseInt(req["user"].id);
         const pollOptionId = req.body;
+        const checkCampaignValidity = (await this.pollSevice.checkCampaignValidity(pollOptionId))[0];
+        if(!checkCampaignValidity) {
+            return res.status(403).json({ message: "This campaign had already expired!" });
+        } 
         const result = await this.pollSevice.postVote(userId, pollOptionId);
         if(result) {
             return res.json(result)
