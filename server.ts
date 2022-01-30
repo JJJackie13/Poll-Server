@@ -6,6 +6,7 @@ import Knex from "knex";
 
 import { env } from "./env";
 import { logger } from "./logger";
+import { setSocketIO } from "./socketio";
 import { createRouter } from "./route";
 
 import { AuthController } from "./controllers/AuthController";
@@ -26,6 +27,8 @@ const knexConfigs = require("./knexfile");
 const configMode = env.NODE_ENV || "development";
 const knexConfig = knexConfigs[configMode];
 export const knex = Knex(knexConfig);
+
+setSocketIO(io);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
