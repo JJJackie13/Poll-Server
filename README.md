@@ -1,6 +1,13 @@
 # Poll-Server
 This is a repository of a backend server for a polling web app. Basically, Nodejs (Express Framework) and PostgreSQL had been used in this repo.
 
+# Example of the vote campaign
+Voting Campaign 1: Which is the best language?
+Start: Jan 1, 2022      End: Feb 28, 2022
+1. JavaScript             Vote: 234508
+2. Java                   Vote: 128567
+3. Python                 Vote: 178945
+
 # Database Design
 PostgreSQL is a relational database, before we build up the server, we need to consider how to liink up the table.
 Below is the design of this repo,
