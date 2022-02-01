@@ -4,6 +4,7 @@ This is a repository of a backend server for a polling web app. Basically, Nodej
 # Database Design
 PostgreSQL is a relational database, before we build up the server, we need to consider how to liink up the table.
 Below is the design of this repo,
+
 <img width="682" alt="螢幕截圖 2022-02-01 下午8 28 15" src="https://user-images.githubusercontent.com/87925464/151968555-f3634454-7171-4a1c-b752-d153b1d3f849.png">
 
 # Frontend
