@@ -28,7 +28,7 @@ Installation
 git clone git@github.com:JJJackie13/Poll-Server.git
 ```
 
-# Installation from yarn
+#### Installation from yarn
 ```javascript
 yarn install
 ```
