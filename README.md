@@ -12,7 +12,7 @@ Start: Jan 1, 2022      End: Feb 28, 2022
 PostgreSQL is a relational database, before we build up the server, we need to consider how to liink up the table.
 Below is the design of this repo,
 
-<img width="682" alt="螢幕截圖 2022-02-01 下午8 28 15" src="https://user-images.githubusercontent.com/87925464/151968555-f3634454-7171-4a1c-b752-d153b1d3f849.png">
+<img width="644" alt="螢幕截圖 2022-02-14 上午2 59 28" src="https://user-images.githubusercontent.com/87925464/153770361-2e23d18b-6176-4e76-a129-6835d381a84f.png">
 
 # Frontend
 Reactjs is suggested to adopt for the frontend web application based on this repo.
