@@ -6,17 +6,18 @@ import { AuthService } from "../services/AuthService";
 import { io } from "../server";
 import { hashPassword, checkPassword } from "../hash";
 import { logger } from "../logger";
+import { isHKID } from "../utils/hkid";
 
 export class AuthController {
     constructor(private authService: AuthService){}
     register = async (req: Request, res: Response) => {
         try {
-            const { hkid, last_Name, password } = req.body;
+            const { hkid, last_Name, password, phone } = req.body;
             if(!hkid || !last_Name || !password) {
-                return res.status(401).json({ message: "Please provide valid HKID no. and your surname" });
+                return res.status(401).json({ message: "Please provide valid HKID no." });
             }
-            if(hkid.length !== 8) {
-                return res.status(401).json({ message: "Please provide valid HKID no. and your surname" });
+            if(!isHKID(hkid)) {
+                return res.status(401).json({ message: "Please provide valid HKID no." });
             }
             const matchedUsers = await this.authService.getUserInfo(hkid);
             if (matchedUsers.length >= 1) {
@@ -26,7 +27,8 @@ export class AuthController {
             const result = await this.authService.register(
                 hkid,
                 last_Name,
-                hashedPassword
+                hashedPassword,
+                phone
             )
             if(result.success) {
                 return res.json(true);
@@ -52,18 +54,19 @@ export class AuthController {
     };
     login = async (req: Request, res: Response) => {
         try {
-            const { hkid, last_Name, password } = req.body;
-            if(!hkid || !last_Name) {
-                return res.status(401).json({ message: "Failed. Wrong WWW id/name!" });
+            if(!req.body.hkid || !req.body.password) {
+                return res.status(401).json({ message: "All inputs are required" });
             }
+            const { hkid, password } = req.body;
             const user = (await this.authService.getUserInfo(hkid))[0];
             if(!user || !(await checkPassword(password, user.password))) {
-                return res.status(401).json({ message: "Failed. Wrong id/name!" });
+                return res.status(403).json({ message: "hkid or password is incorrect" });
             }
             const payload = {
                 id: user.id,
                 hkid: user.hkid,
                 last_Name: user.last_name,
+                phone: user.phone,
             };
             const token = jwtSimple.encode(payload, jwt.jwtSecret);
 

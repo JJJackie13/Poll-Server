@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<void> {
         table.integer("user_id").unsigned();
         table.foreign("user_id").references("users.id");
         table.integer("poll_options_id").unsigned();
-        table.foreign("poll_options_id").references("poll_options.id");
+        table.foreign("poll_options_id").references("poll_options.id").onDelete("CASCADE");
         table.timestamps(false, true);
     })
 }

@@ -7,6 +7,7 @@ export async function up(knex: Knex): Promise<void> {
         table.string("last_name");
         table.string("hkid");
         table.string("password");
+        table.string("phone");
         table.timestamps(false, true);
     })
 }

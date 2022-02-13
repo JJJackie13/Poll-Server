@@ -11,13 +11,15 @@ export class AuthService {
     register = async (
         hkid: string,
         lastName: string,
-        hashedPassword: string
+        hashedPassword: string,
+        phone: string
     ) => {
         try {
             await this.knex("users").insert({
-                hkid: hkid,
+                hkid: hkid.toLowerCase(),
                 last_name: lastName,
-                hashedPassword: hashedPassword
+                hashedPassword,
+                phone,
             });
             return { success: true };
         } catch (error) {

@@ -73,6 +73,13 @@ export class PollService {
             return false;
         }
     }
+    checkUserVoteExist = async (userId: number, pollOptionId: number) => {
+        const userCheck = await this.knex("votes")
+            .select("*")
+            .where("user_id", userId)
+            .andWhere("pollOptionId", pollOptionId);
+        return userCheck;
+    }
     checkCampaignValidity = async (pollOptionId: number) => {
         try {
             const result = (await this.knex.raw(
@@ -85,6 +92,65 @@ export class PollService {
             return result;
         } catch (error) {
             console.log(error);
+            return false;
+        }
+    }
+    postNewCampaign = async (userId: number, data: any) => {
+        const {
+            title,
+            start_time,
+            end_time,
+            nameList,
+        } = data;
+        try {
+            await this.knex.transaction(async (trx) => {
+                const pollId = (
+                    await trx("poll")
+                    .insert({
+                        user_id: userId,
+                        title,
+                        start_time,
+                        end_time,
+                    })
+                    .returning("id")
+                )[0];
+                
+                await trx("poll_options").insert(
+                    nameList.map((name: string) => {
+                        return { poll_id: pollId, name: name };
+                    })
+                );
+            });
+            return true;
+        } catch (error) {
+            console.log("postNewCampaign: ", error);
+            return false;
+        }
+    }
+    checkCampaignOwner = async (userId: number, pollId: number) => {
+        const owner = await this.knex("poll")
+            .select("*")
+            .where("user_id", userId)
+            .andWhere("id", pollId);
+        return owner;
+    }
+    updateCampaign = async (pollId: number, data: any) => {
+        const {
+            title,
+            start_time,
+            end_time,
+        } = data;
+        try {
+            await this.knex("poll")
+            .update({
+                title,
+                start_time,
+                end_time,
+            })
+            .where("id", pollId);
+            return true;
+        } catch (error) {
+            console.log("updateCampaign: ", error);
             return false;
         }
     }

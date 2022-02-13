@@ -16,15 +16,17 @@ export function createRouter (options: {
     let router = express.Router();
 
     //REGISTER AND LOGIN
-    router.post("/v1/register", authController.register);
-    router.post("/v1/login", authController.login);
-    router.get("/v1/logout", authController.logout);
+    router.post("/v1/user/register", authController.register);
+    router.post("/v1/user/login", authController.login);
+    router.get("/v1/user/logout", authController.logout);
 
     //POLL ACTION
     router.get("/v1/campaigns", pollController.getAllActivateCampaigns);
-    router.get("/v1/campaigns_ended", pollController.getAllEndedCampaigns);
+    router.get("/v1/campaigns/ended", pollController.getAllEndedCampaigns);
+    router.post("/v1/campaigns", isAuth, pollController.createCampaign);
     router.get("/v1/campaigns/:id", pollController.getCampaignsById);
-    router.post("/v1/compaigns_vote", isAuth, pollController.postVote);
+    router.post("/v1/compaigns/vote", isAuth, pollController.postVote);
+    router.put("/v1/campaigns/edit", isAuth, pollController.updateCampaign);
 
     return router;
 }
