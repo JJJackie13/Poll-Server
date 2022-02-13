@@ -25,13 +25,55 @@ Installation
 ------------
 # Installation from git
 ```javascript
-
+git clone git@github.com:JJJackie13/Poll-Server.git
 ```
 
 # Installation from yarn
 ```javascript
 yarn install
 ```
+
+# Installation of PostgreSQL
+Download PostgreSQL from the below link,
+https://www.postgresql.org/download/
+
+After the PostgreSQL had been installed, open the terminal and type the below code:
+access postgreSQL by 
+```javascript
+psql
+```
+Create database by
+```javascript
+CREATE DATABASE <your-database-name>;
+```
+Create user
+```javascript
+CREATE USER <your-username> WITH PASSWORD '<your-password-here>' SUPERUSER;
+```
+Grant user 
+```javascript
+GRANT ALL PRIVILEGES ON DATABASE <your-database-name> TO <your-username>;
+```
+
+# Run Knex Migration
+Please run the below code in terminal to generate table in Database.
+```javascript
+yarn knex migrate:latest
+```
+# Rolling Back Knex Migration
+if error happen, run the below code in terminal to delete table in Database.
+```javascript
+yarn knex migrate:rollback 
+```
+
+# Mock data
+Also, for mock data, please run the below code after the tables are created in database.
+```javascript
+yarn knex seed:run 
+```
+
+# Create .env file
+Please create .env in Server file, put the related information in .env file.
 
 API
 ------------
