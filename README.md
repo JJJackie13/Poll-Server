@@ -93,5 +93,4 @@ Socket IO had been implement for the real time vote. A room method had been desi
 A dockerfile is used for later implementation the server on AWS.
 
 # Update
-A update version will be uploaded later for using knex to generate seed data for testing. Also, for the testing, seed data need to be generated for the critical test case, and it will be provided on the upcoming version.
-
+A update version had be uploaded for using knex to generate seed data for testing on 15 Feb 2022. For the testing, seed data need to be generated for the critical test case, and it will be provided on the upcoming version.
