@@ -9,7 +9,7 @@ export class PollService {
                 `select
                     distinct(select count(*) from votes join poll_options 
                     on poll_options.id = votes.poll_options_id where poll.id = poll_options.poll_id) as totalVote,
-                    poll.title, poll.start_time, poll.end_time
+                    poll.title, poll.start_time, poll.end_time, poll.id
                     from poll
                     join poll_options on poll.id = poll_options.poll_id
                     join votes on poll_options.id = votes.poll_options_id
@@ -29,7 +29,7 @@ export class PollService {
                 `select
                     distinct(select count(*) from votes join poll_options 
                     on poll_options.id = votes.poll_options_id where poll.id = poll_options.poll_id) as totalVote,
-                    poll.title, poll.start_time, poll.end_time
+                    poll.title, poll.start_time, poll.end_time, poll.id
                     from poll
                     join poll_options on poll.id = poll_options.poll_id
                     join votes on poll_options.id = votes.poll_options_id
@@ -49,7 +49,7 @@ export class PollService {
                 `select
                     distinct(select COUNT(*) from votes where poll_options.id = votes.poll_options_id) as vote_number,
                     poll.title, poll.start_time, poll.end_time,
-                    poll_options.name
+                    poll_options.name, poll_options.id as pollOptionsId
                     from poll 
                     join poll_options on poll.id = poll_options.poll_id
                     join votes on poll_options.id = votes.poll_options_id
@@ -74,19 +74,25 @@ export class PollService {
         }
     }
     checkUserVoteExist = async (userId: number, pollOptionId: number) => {
-        const userCheck = await this.knex("votes")
-            .select("*")
-            .where("user_id", userId)
-            .andWhere("pollOptionId", pollOptionId);
-        return userCheck;
+        try {
+            await this.knex("votes")
+                .select("*")
+                .where("user_id", userId)
+                .andWhere("pollOptionId", pollOptionId);
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+
     }
     checkCampaignValidity = async (pollOptionId: number) => {
         try {
             const result = (await this.knex.raw(
                 `select poll_options.id from poll
                 join poll_options on poll.id = poll_options.poll_id
-                where end_time < now()
-                and poll_options.id = :pollOptionsId;`,
+                where end_time > now()
+                and poll_options.id = :pollOptionId;`,
                 { pollOptionId }
             )).rows
             return result;
@@ -95,29 +101,27 @@ export class PollService {
             return false;
         }
     }
-    postNewCampaign = async (userId: number, data: any) => {
-        const {
-            title,
-            start_time,
-            end_time,
-            nameList,
-        } = data;
+    postNewCampaign = async (
+        userId: number,
+        title: string,
+        start_time: string,
+        end_time: string,
+        nameList: [],
+    ) => {
         try {
             await this.knex.transaction(async (trx) => {
-                const pollId = (
-                    await trx("poll")
+                const pollId = await trx("poll")
                     .insert({
                         user_id: userId,
                         title,
                         start_time,
                         end_time,
                     })
-                    .returning("id")
-                )[0];
-                
+                    .returning("id");
+
                 await trx("poll_options").insert(
                     nameList.map((name: string) => {
-                        return { poll_id: pollId, name: name };
+                        return { poll_id: pollId[0].id, name: name };
                     })
                 );
             });

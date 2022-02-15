@@ -17,65 +17,20 @@
     "produces": [
         "application/json"
     ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
     "paths": {
-        "/v1/login": {
+        "/v1/user/register": {
             "post": {
                 "tags": [
-                    "login"
-                ],
-                "summary": "Login to your own account",
-                "requestBody": {
-                    "description": "User Object",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/definitions/User"
-                            }
-                        }
-                    }
-                },
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
-                    "401": {
-                        "description": "Failed. Wrong id/name!"
-                    },
-                    "500": {
-                        "description": "ERROR!"
-                    }
-                }
-            }
-        },
-        "/v1/logout": {
-            "get": {
-                "tags": [
-                    "Logout"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
-                    "500": {
-                        "description": "ERROR!"
-                    }
-                }
-            }
-        },
-        "/v1/register": {
-            "post": {
-                "tags": [
-                    "Register"
+                    "user"
                 ],
                 "summary": "Register for a new account",
                 "requestBody": {
@@ -84,7 +39,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/definitions/User"
+                                "$ref": "#/definitions/User_register"
                             }
                         }
                     }
@@ -94,16 +49,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
+                        "description": "Success"
                     },
                     "400": {
                         "description": "Failed to register!"
                     },
                     "401": {
-                        "description": "Please provide valid HKID no. and your surname"
+                        "description": "Please provide valid HKID no."
+                    },
+                    "406": {
+                        "description": "All inputs are required"
                     },
                     "403": {
                         "description": "This HKID no. is already register!"
@@ -114,24 +69,47 @@
                 }
             }
         },
-        "/v1/campaigns/:id": {
-            "get": {
+        "/v1/user/login": {
+            "post": {
                 "tags": [
-                    "Campaigns"
+                    "user"
                 ],
-                "summary": "Click to campaign by Id",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Poll_options_list"
+                "summary": "Login to your own account",
+                "requestBody": {
+                    "description": "User Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/User_login"
                             }
                         }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
                     },
-                    "400": {
-                        "description": "Failed to retrieve campaign"
+                    "401": {
+                        "description": "Failed. Wrong id/name!"
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            }
+        },
+        "/v1/user/logout": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
                     },
                     "500": {
                         "description": "ERROR!"
@@ -142,7 +120,7 @@
         "/v1/campaigns": {
             "get": {
                 "tags": [
-                    "Activated campaigns"
+                    "Campaigns"
                 ],
                 "summary": "Get Lists of the activated campaigns",
                 "responses": {
@@ -162,12 +140,48 @@
                         "description": "ERROR!"
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "security": [
+                    {
+                      "bearerAuth": []
+                    }
+                ],
+                "summary": "Create a poll campaign",
+                "requestBody": {
+                    "description": "Campaign Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/Create_Campaign"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Failed"
+                    },
+                    "403": {
+                        "description": "Campaign expired"
+                    }
+                }
             }
         },
-        "/v1/campaigns_ended": {
+        "/v1/campaigns/ended": {
             "get": {
                 "tags": [
-                    "Ended campaigns"
+                    "Campaigns"
                 ],
                 "summary": "Get Lists of the ended campaigns",
                 "responses": {
@@ -189,12 +203,110 @@
                 }
             }
         },
-        "/v1/compaigns_vote": {
+        "/v1/campaigns/{id}": {
+            "get": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Get campaign by Id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The campaign ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object",
+                                    "schema": {
+                                        "$ref": "#/definitions/Campaign_by_id"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to retrieve campaign"
+                    },
+                    "500": {
+                        "description": "ERROR!"
+                    }
+                }
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "description": "The campaign ID",
+                    "required": true,
+                    "type": "integer",
+                    "style": "simple"
+                }
+            ],
+            "put": {
+                "tags": [
+                    "Campaigns"
+                ],
+                "summary": "Edit campaign",
+                "security": [
+                    {
+                      "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The campaign ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Campaign Object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/definitions/Campaign"
+                            }
+                        }
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Failed"
+                    },
+                    "403": {
+                        "description": "Campaign expired"
+                    }
+                }
+            }
+        },
+        "/v1/campaigns/vote": {
             "post": {
                 "tags": [
-                    "Vote"
+                    "Campaigns"
                 ],
                 "summary": "Vote for a poll",
+                "security": [
+                    {
+                      "bearerAuth": []
+                    }
+                ],
                 "requestBody": {
                     "description": "Vote Object",
                     "required": true,
@@ -211,10 +323,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
-                        "schema": {
-                            "$ref": "#/definitions/vote"
-                        }
+                        "description": "Success"
                     },
                     "400": {
                         "description": "Failed"
@@ -225,11 +334,10 @@
                 }
             }
         }
-
     },
 
     "definitions": {
-        "User": {
+        "User_register": {
             "type": "object",
             "properties": {
                 "hkid": {
@@ -240,6 +348,77 @@
                 },
                 "password": {
                     "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "User_login": {
+            "type": "object",
+            "properties": {
+                "hkid": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "Create_Campaign": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "nameList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "Campaign": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "Campaign_by_id": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "vote_number": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pollOptionsId": {
+                    "type": "integer"
                 }
             }
         },
@@ -253,10 +432,13 @@
                     "type": "string"
                 },
                 "start_time": {
-                    "type": "date"
+                    "type": "string"
                 },
                 "end_time": {
-                    "type": "date"
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 }
             }
         },
@@ -270,22 +452,22 @@
                     "type": "string"
                 },
                 "start_time": {
-                    "type": "date"
+                    "type": "string"
                 },
                 "end_time": {
-                    "type": "date"
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
+                },
+                "pollOptionsId" :{
+                    "type": "integer"
                 }
             }
         },
         "vote": {
             "type": "object",
             "properties": {
-                "user_Id": {
-                    "type": "integer"
-                },
                 "poll_options_id": {
                     "type": "integer"
                 }

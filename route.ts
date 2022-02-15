@@ -25,8 +25,8 @@ export function createRouter (options: {
     router.get("/v1/campaigns/ended", pollController.getAllEndedCampaigns);
     router.post("/v1/campaigns", isAuth, pollController.createCampaign);
     router.get("/v1/campaigns/:id", pollController.getCampaignsById);
-    router.post("/v1/compaigns/vote", isAuth, pollController.postVote);
-    router.put("/v1/campaigns/edit", isAuth, pollController.updateCampaign);
+    router.post("/v1/campaigns/vote", isAuth, pollController.postVote);
+    router.put("/v1/campaigns/:id", isAuth, pollController.updateCampaign);
 
     return router;
 }

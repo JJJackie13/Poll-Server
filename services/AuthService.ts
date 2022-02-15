@@ -5,7 +5,7 @@ export class AuthService {
     getUserInfo = async (hkid: string) => {
         const user = await this.knex("users")
             .select("*")
-            .where("hkid", hkid.toLowerCase());
+            .where("hkid", hkid);
         return user;
     };
     register = async (
@@ -16,9 +16,9 @@ export class AuthService {
     ) => {
         try {
             await this.knex("users").insert({
-                hkid: hkid.toLowerCase(),
+                hkid: hkid,
                 last_name: lastName,
-                hashedPassword,
+                password: hashedPassword,
                 phone,
             });
             return { success: true };

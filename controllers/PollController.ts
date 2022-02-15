@@ -62,16 +62,16 @@ export class PollController {
     };
     postVote = async (req: Request, res: Response) => {
         const userId = parseInt(req["user"].id);
-        const pollOptionId = req.body;
-        const checkCampaignValidity = (await this.pollSevice.checkCampaignValidity(pollOptionId))[0];
-        if(!checkCampaignValidity) {
+        const { poll_options_id } = req.body;
+        const checkCampaignValidity = await this.pollSevice.checkCampaignValidity(poll_options_id);
+        if(checkCampaignValidity.length == 0) {
             return res.status(403).json({ message: "This campaign had already expired!" });
         } 
-        const matchedUsers = await this.pollSevice.checkUserVoteExist(userId, pollOptionId);
-        if (matchedUsers.length >= 1) {
+        const matchedUsers = await this.pollSevice.checkUserVoteExist(userId, poll_options_id);
+        if (matchedUsers) {
             return res.status(401).json({ message: "This HKID no. had voted already." });
         }
-        const result = await this.pollSevice.postVote(userId, pollOptionId);
+        const result = await this.pollSevice.postVote(userId, poll_options_id);
         if(result) {
             return res.json(result)
         } else {
@@ -80,8 +80,8 @@ export class PollController {
     };
     createCampaign = async (req: Request, res: Response) => {
         const userId = parseInt(req["user"].id);
-        const data = req.body;
-        const result = await this.pollSevice.postNewCampaign(userId, data);
+        const { title, start_time, end_time, nameList } = req.body;
+        const result = await this.pollSevice.postNewCampaign(userId, title, start_time, end_time, nameList);
         if (result) {
             return res.json(result);
         } else {

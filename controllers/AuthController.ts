@@ -12,9 +12,9 @@ export class AuthController {
     constructor(private authService: AuthService){}
     register = async (req: Request, res: Response) => {
         try {
-            const { hkid, last_Name, password, phone } = req.body;
-            if(!hkid || !last_Name || !password) {
-                return res.status(401).json({ message: "Please provide valid HKID no." });
+            const { hkid, last_name, password, phone } = req.body;
+            if(!hkid || !last_name || !password || !phone) {
+                return res.status(406).json({ message: "All inputs are required" });
             }
             if(!isHKID(hkid)) {
                 return res.status(401).json({ message: "Please provide valid HKID no." });
@@ -26,7 +26,7 @@ export class AuthController {
             const hashedPassword = await hashPassword(password);
             const result = await this.authService.register(
                 hkid,
-                last_Name,
+                last_name,
                 hashedPassword,
                 phone
             )

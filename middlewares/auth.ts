@@ -16,7 +16,7 @@ export const isAuth = async (
     try {
         const token = permit.check(req);
         if(!token) {
-            return res.status(401).json({ message: "Permission Denied" });
+            return res.status(401).json({ message: "Missing Credentials" });
         }
         const payload = jwtSimple.decode(token, jwt.jwtSecret);
         const user = await authService.getUserInfo(payload.hkid);

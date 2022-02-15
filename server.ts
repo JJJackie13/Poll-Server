@@ -9,6 +9,7 @@ import { logger } from "./logger";
 import { setSocketIO } from "./socketio";
 import { createRouter } from "./route";
 
+import cors from "cors";
 import { AuthController } from "./controllers/AuthController";
 import { AuthService } from "./services/AuthService";
 import { PollController } from "./controllers/PollController";
@@ -30,6 +31,7 @@ export const knex = Knex(knexConfig);
 
 setSocketIO(io);
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
